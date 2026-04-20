@@ -1,0 +1,43 @@
+version: "3.8"
+
+services:
+
+# Database
+
+  db:
+    image: mysql:8.0
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: 1234 
+      MYSQL_DATABASE: testiki_db # user - root, password - 1234
+    ports:
+    - "3306:3306" # Стандарт
+
+# ПХП
+
+  php:
+    build: .
+    volumes:
+      - ./backend:/var/www/html
+
+# Нагетс
+
+  nginx:
+    image: nginx:latest
+    ports:
+      - "8080:80" # Порт с винды перебрасывает на линукс - 80 по стандарту
+    volumes:
+      - ./backend:/var/www/html
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf # файл настроек
+    depends_on:
+      - php
+      - db
+
+# Myadmin
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    ports:
+      - "8081:80"
+    environment:
+      PMA_HOST: db

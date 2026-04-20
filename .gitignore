@@ -1,0 +1,26 @@
+# Системное и IDE 
+.idea/
+.vscode/
+*.log
+.DS_Store
+Thumbs.db
+
+#  Docker 
+.env
+
+# Backend (Yii2) 
+backend/vendor/
+backend/runtime/
+backend/web/assets/
+backend/config/db-local.php
+backend/config/main-local.php
+backend/config/params-local.php
+backend/config/test-local.php
+
+# Облачко
+backend/web/uploads/*
+!backend/web/uploads/.gitkeep
+
+# Frontend (Node.js/Vue) 
+frontend/node_modules/
+frontend/dist/
