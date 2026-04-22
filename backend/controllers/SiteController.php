@@ -125,4 +125,13 @@ class SiteController extends Controller
     {
         return $this->render('about');
     }
+
+    public function actionStorage()
+    {
+    // только залогиненые
+    if (Yii::$app->user->isGuest) {
+        return $this->redirect(['site/login']);
+    }
+    return $this->render('storage');
+    }
 }

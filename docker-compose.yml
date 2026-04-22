@@ -5,7 +5,7 @@ services:
 # Database
 
   db:
-    image: mysql:8.0
+    image: mysql:5.7.41
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: 1234 
@@ -23,7 +23,7 @@ services:
 # Нагетс
 
   nginx:
-    image: nginx:latest
+    image: nginx:1.20.1
     ports:
       - "8080:80" # Порт с винды перебрасывает на линукс - 80 по стандарту
     volumes:
