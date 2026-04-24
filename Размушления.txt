@@ -1,3 +1,8 @@
 sudo chown -R $USER:$USER .
 sudo chmod -R 777 . права на перезапись, чтобы не возмущялось
 Я НЕНАВИЖУ ЭБУЧИЙ ФРОНТ. КНОПКИ РИСОВАТЬ БЫЛО ВЕСЕЛЕЕ, ЧЕМ ЭТО
+docker-compose exec php php yii migrate - миграция в корневой папке, это чтобы восстановить бд
+
+http://localhost:8080/index.php?r=site/storage
+http://localhost:8080/index.php?r=site/login
+http://localhost:8080/index.php?r=site/logout - это пост запрос, чтобы разлогиниться, пока нет норм кнопки на фронте

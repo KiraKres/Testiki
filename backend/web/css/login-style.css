@@ -1,0 +1,175 @@
+body, html {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    font-family: 'Inter', sans-serif; /* Или тот, что в Figma */
+    background-color: #FFFDF5 !important; /* Светлый фон из дизайна */
+    overflow: hidden;
+}
+
+.login-page {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Темный круг на фоне */
+.bg-circle {
+    position: absolute;
+    width: 750px;
+    height: 763px;
+    background-color: #436063; /* Цвет круга */
+    border-radius: 50%;
+    right: -3%;
+    top: 30%; /* Чем больше число, тем ниже упадет круг */
+    z-index: 3;
+    box-shadow: -10px 10px 20px rgba(0,0,0,0.1);
+}
+
+/* Карточка */
+.login-card {
+    background: #E8E3D2; /* Цвет карточки с прозрачностью */
+    position: absolute;
+    padding: 63px;
+    border-radius: 40px;
+    width: 600px;
+    /* Центрирование по вертикали */
+    top: 50%;
+    transform: translateY(-50%);
+    /* Смещение влево */
+    left: 15%; /* Если хочешь еще левее — ставь 2% или даже 0 */
+    z-index: 10;
+    box-shadow: -10px 10px 20px rgba(0,0,0,0.1);
+}
+
+.login-card h1 {
+    color: #4A5D5E;
+    text-align: center;
+    font-size: 32px;
+    margin-bottom: 10px;
+    border-bottom: 2px solid #4A5D5E;
+    padding-bottom: 10px;
+}
+
+.tabs {
+    margin-bottom: 30px;
+}
+
+.tab {
+    margin-right: 20px;
+    color: #4A5D5E;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.tab.active {
+    border-bottom: 2px solid #4A5D5E;
+}
+
+/* Поля ввода */
+.custom-label {
+    color: #4A5D5E;
+    font-weight: 500;
+    margin-top: 15px;
+}
+
+.custom-input {
+    background-color: #6C8485 !important; /* Цвет инпута */
+    border: none !important;
+    border-radius: 12px !important;
+    color: white !important;
+    padding: 12px !important;
+}
+
+.custom-input::placeholder {
+    color: #A0B0B1;
+}
+
+/* Кнопка */
+.btn-signin {
+    width: 100%;
+    background-color: #4A5D5E;
+    color: white;
+    border: none;
+    padding: 15px;
+    border-radius: 15px;
+    margin-top: 30px;
+    font-size: 18px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.btn-signin:hover {
+    background-color: #384D48;
+}
+
+/* Динозавр */
+.dino-image {
+    position: absolute; /* КРИТИЧЕСКИ ВАЖНО: это дает право использовать координаты */
+    width: 450px; 
+    height: auto; 
+    right: 5%;         /* Расстояние от правого края экрана */
+    top: 70%;          /* Расстояние от верха */
+    transform: translateY(-50%); /* Маленькая хитрость, чтобы центрировать ровно по середине */
+    z-index: 5;        /* Слой: чем выше число, тем "ближе" к тебе (поверх всего остального) */
+}
+
+.dino-image {
+    width: 450px;
+}
+
+/* Общие свойства для всех листьев */
+.leaf {
+    position: absolute; /* Позволяет двигать картинку координатами */
+    pointer-events: none; /* Чтобы листик не мешал кликать по кнопкам, если он их перекроет */
+}
+
+/* Настройки конкретно для твоего нового листика */
+.leaf-new-bottom {
+    bottom: 7.5%;      /* Прижать к самому низу */
+    left: 0;        /* Прижать к левому краю */
+    width: 400px;   /* Размер (подбери под себя) */
+    z-index: 100;   /* Чтобы он был ПОВЕРХ серой карточки, как в Figma */
+}
+
+.leaf-new-top {
+    top: 0;      /* Прижать к самому низу */
+    right: 0;        /* Прижать к левому краю */
+    width: 500px;   /* Размер (подбери под себя) */
+    z-index: 100;   /* Чтобы он был ПОВЕРХ серой карточки, как в Figma */
+}
+
+.leaf-new-top_1 {
+    top: 0;      /* Прижать к самому низу */
+    left: 0;        /* Прижать к левому краю */
+    width: 300px;   /* Размер (подбери под себя) */
+    z-index: 100;   /* Чтобы он был ПОВЕРХ серой карточки, как в Figma */
+}
+
+.leaf-new-top_2 {
+    top: 0;      /* Прижать к самому низу */
+    left: 0;        /* Прижать к левому краю */
+    width: 400px;   /* Размер (подбери под себя) */
+    z-index: 100;   /* Чтобы он был ПОВЕРХ серой карточки, как в Figma */
+}
+
+.leaf-new-top_3 {
+    top: -20%;      /* Прижать к самому низу */
+    right: 30%;        /* Прижать к левому краю */
+    width: 500px;   /* Размер (подбери под себя) */
+    z-index: 100;   /* Чтобы он был ПОВЕРХ серой карточки, как в Figma */
+}
+
+.decor-line {
+    position: fixed;     /* Фиксируем относительно экрана */
+    bottom: 0;          /* Прижимаем к самому низу */
+    left: 0;            /* От левого края */
+    width: 100%;        /* На всю ширину */
+    height: 70px;       /* Толщина полоски — подбери под свой глаз */
+    background-color: #436063; /* Цвет как у кнопок или динозавра */
+    z-index: 4;       /* Чтобы она была поверх всего декора */
+
+}

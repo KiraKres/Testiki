@@ -1,55 +1,71 @@
 <?php
-
 /** @var yii\web\View $this */
 /** @var yii\bootstrap5\ActiveForm $form */
-
 /** @var app\models\LoginForm $model */
 
 use yii\bootstrap5\ActiveForm;
 use yii\bootstrap5\Html;
 
-$this->title = 'Login';
-$this->params['breadcrumbs'][] = $this->title;
+$this->title = 'Welcome!';
+$this->registerCssFile('@web/css/login-style.css?v=' . time());
 ?>
-<div class="site-login">
-    <h1><?= Html::encode($this->title) ?></h1>
 
-    <p>Please fill out the following fields to login:</p>
+<div class="login-page">
+    <div class="bg-circle"></div>
 
-    <div class="row">
-        <div class="col-lg-5">
+    <div class="login-container">
+        <div class="login-card">
+            <h1>Welcome!</h1>
+            <div class="tabs">
+                <span class="tab active">sign in</span>
+                <span class="tab">sign up</span>
+            </div>
 
             <?php $form = ActiveForm::begin([
                 'id' => 'login-form',
                 'fieldConfig' => [
                     'template' => "{label}\n{input}\n{error}",
-                    'labelOptions' => ['class' => 'col-lg-1 col-form-label mr-lg-3'],
-                    'inputOptions' => ['class' => 'col-lg-3 form-control'],
-                    'errorOptions' => ['class' => 'col-lg-7 invalid-feedback'],
+                    'labelOptions' => ['class' => 'custom-label'],
+                    'inputOptions' => ['class' => 'custom-input'],
                 ],
             ]); ?>
 
-            <?= $form->field($model, 'username')->textInput(['autofocus' => true]) ?>
+            <?= $form->field($model, 'username')->textInput(['placeholder' => '👤 username'])->label('username') ?>
 
-            <?= $form->field($model, 'password')->passwordInput() ?>
-
-            <?= $form->field($model, 'rememberMe')->checkbox([
-                'template' => "<div class=\"custom-control custom-checkbox\">{input} {label}</div>\n<div class=\"col-lg-8\">{error}</div>",
-            ]) ?>
+            <?= $form->field($model, 'password')->passwordInput(['placeholder' => '🔒 password'])->label('password') ?>
 
             <div class="form-group">
-                <div>
-                    <?= Html::submitButton('Login', ['class' => 'btn btn-primary', 'name' => 'login-button']) ?>
-                </div>
+                <?= Html::submitButton('sign in', ['class' => 'btn-signin', 'name' => 'login-button']) ?>
             </div>
 
             <?php ActiveForm::end(); ?>
-
-            <div style="color:#999;">
-                You may login with <strong>admin/admin</strong> or <strong>demo/demo</strong>.<br>
-                To modify the username/password, please check out the code <code>app\models\User::$users</code>.
-            </div>
-
         </div>
+
+        <div class="dino-wrapper">
+            <img src="/img/dino_login.svg" alt="Dino" class="dino-image">
+        </div>
+
+        <div class="leaf_on_bottom">  
+            <img src="/img/leaf_on_bottom_login.svg" class="leaf leaf-new-bottom" alt="">
+        </div>
+
+        <div class="leaf_on_top">  
+            <img src="/img/leaf_on_top_login.svg" class="leaf leaf-new-top" alt="">
+        </div>
+
+        <div class="leaf_on_top">  
+            <img src="/img/leaf_on_top_login_1.svg" class="leaf leaf-new-top_1" alt="">
+        </div>
+
+        <div class="leaf_on_top">  
+            <img src="/img/leaf_on_top_login_2.svg" class="leaf leaf-new-top_2" alt="">
+        </div>
+
+        <div class="decor-line"></div>
+
+        <div class="leaf_on_top">  
+            <img src="/img/leaf_on_top_login_3.svg" class="leaf leaf-new-top_3" alt="">
+        </div>
+
     </div>
 </div>

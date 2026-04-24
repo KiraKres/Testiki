@@ -16,27 +16,32 @@ class SiteController extends Controller
      * {@inheritdoc}
      */
     public function behaviors()
-    {
-        return [
-            'access' => [
-                'class' => AccessControl::class,
-                'only' => ['logout'],
-                'rules' => [
-                    [
-                        'actions' => ['logout'],
-                        'allow' => true,
-                        'roles' => ['@'],
-                    ],
+{
+    return [
+        'access' => [
+            'class' => \yii\filters\AccessControl::class,
+            'only' => ['logout', 'signup', 'login'], // К каким экшенам применяем правила
+            'rules' => [
+                [
+                    'actions' => ['login', 'signup'],
+                    'allow' => true,
+                    'roles' => ['?'], // '?' значит только для гостей
+                ],
+                [
+                    'actions' => ['logout'],
+                    'allow' => true,
+                    'roles' => ['@'], // '@' значит только для авторизованных
                 ],
             ],
-            'verbs' => [
-                'class' => VerbFilter::class,
-                'actions' => [
-                    'logout' => ['post'],
-                ],
+        ],
+        'verbs' => [
+            'class' => \yii\filters\VerbFilter::class,
+            'actions' => [
+                // 'logout' => ['post'], // ВРЕМЕННО закомментируй это, чтобы выйти через ссылку
             ],
-        ];
-    }
+        ],
+    ];
+}
 
     /**
      * {@inheritdoc}
@@ -60,9 +65,13 @@ class SiteController extends Controller
      * @return string
      */
     public function actionIndex()
-    {
-        return $this->render('index');
+{
+    if (Yii::$app->user->isGuest) {
+        return $this->redirect(['site/login']);
     }
+
+    return $this->redirect(['site/storage']);
+}
 
     /**
      * Login action.
@@ -70,21 +79,21 @@ class SiteController extends Controller
      * @return Response|string
      */
     public function actionLogin()
-    {
-        if (!Yii::$app->user->isGuest) {
-            return $this->goHome();
-        }
-
-        $model = new LoginForm();
-        if ($model->load(Yii::$app->request->post()) && $model->login()) {
-            return $this->goBack();
-        }
-
-        $model->password = '';
-        return $this->render('login', [
-            'model' => $model,
-        ]);
+{
+    if (!Yii::$app->user->isGuest) {
+        return $this->redirect(['site/storage']);
     }
+
+    $model = new \app\models\LoginForm();
+    if ($model->load(Yii::$app->request->post()) && $model->login()) {
+        return $this->redirect(['site/storage']);
+    }
+
+    $model->password = '';
+    return $this->render('login', [
+        'model' => $model,
+    ]);
+}
 
     /**
      * Logout action.
