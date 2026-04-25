@@ -1,10 +1,18 @@
+/* ТЕЛО*/
 body, html {
     margin: 0;
     padding: 0;
     height: 100%;
-    font-family: 'Inter', sans-serif; /* Или тот, что в Figma */
-    background-color: #FFFDF5 !important; /* Светлый фон из дизайна */
+    font-family: 'Inter', sans-serif;
+    background-color: #FFFDF5 !important;
     overflow: hidden;
+    user-select: none; /* Запрет выделения текста на всей странице */
+}
+
+/* выделение текста только в полях ввода */
+input, textarea {
+    user-select: text;
+    -webkit-user-select: text;
 }
 
 .login-page {
@@ -16,79 +24,104 @@ body, html {
     align-items: center;
 }
 
-/* Темный круг на фоне */
-.bg-circle {
+/* КРУГИ*/
+.bg-circle, .bg-circle-2, .bg-circle-3, .bg-circle-4 {
     position: absolute;
-    width: 750px;
-    height: 763px;
-    background-color: #436063; /* Цвет круга */
     border-radius: 50%;
-    right: -3%;
-    top: 30%; /* Чем больше число, тем ниже упадет круг */
-    z-index: 3;
-    box-shadow: -10px 10px 20px rgba(0,0,0,0.1);
+    box-shadow: -10px 10px 20px rgba(0,0,0,0.2);
+    pointer-events: none;
 }
 
-/* Карточка */
+.bg-circle {
+    width: 750px;
+    height: 763px;
+    background-color: #436063;
+    right: -3%;
+    top: 30%;
+    z-index: 3;
+}
+
+.bg-circle-2 { width: 400px; height: 400px; background-color: #6C8485; right: 400px; top: 50px; z-index: 1; opacity: 0.6; }
+.bg-circle-3 { width: 500px; height: 500px; background-color: #6C8485; right: 600px; bottom: -90px; z-index: 1; opacity: 0.6; }
+.bg-circle-4 { width: 500px; height: 500px; background-color: #6C8485; left: 400px; top: -400px; z-index: 1; opacity: 0.6; }
+
+/* ЦЕНТРАЛЬНАЯ КАРТОЧКА */
 .login-card {
-    background: #E8E3D2; /* Цвет карточки с прозрачностью */
+    background: #E8E3D2;
     position: absolute;
     padding: 63px;
     border-radius: 40px;
     width: 600px;
-    /* Центрирование по вертикали */
     top: 50%;
+    left: 15%;
     transform: translateY(-50%);
-    /* Смещение влево */
-    left: 15%; /* Если хочешь еще левее — ставь 2% или даже 0 */
     z-index: 10;
-    box-shadow: -10px 10px 20px rgba(0,0,0,0.1);
+    box-shadow: -10px 10px 20px rgba(0,0,0,0.4);
 }
 
 .login-card h1 {
     color: #4A5D5E;
     text-align: center;
-    font-size: 32px;
-    margin-bottom: 10px;
+    font-size: 40px;
+    margin-bottom: 30px;
     border-bottom: 2px solid #4A5D5E;
     padding-bottom: 10px;
 }
 
+/*ТАБЫ (ПЕРЕКЛЮЧАТЕЛЬ)*/
 .tabs {
-    margin-bottom: 30px;
+    margin-bottom: 40px; 
+    display: flex;
+    gap: 30px; 
 }
 
 .tab {
-    margin-right: 20px;
     color: #4A5D5E;
     cursor: pointer;
-    font-weight: bold;
+    font-size: 24px; 
+    font-weight: 500;
+    transition: all 0.3s ease;
+    opacity: 0.6;
 }
 
 .tab.active {
-    border-bottom: 2px solid #4A5D5E;
+    opacity: 1;
+    border-bottom: 3px solid #4A5D5E;
+    padding-bottom: 5px;
 }
 
-/* Поля ввода */
+/* ПОЛЯ ВВОДА */
 .custom-label {
+    display: block;
     color: #4A5D5E;
+    font-size: 18px;
+    margin-bottom: 8px;
     font-weight: 500;
-    margin-top: 15px;
+    text-align: left;
+}
+
+.input-group-custom {
+    position: relative;
+    width: 100%;
 }
 
 .custom-input {
-    background-color: #6C8485 !important; /* Цвет инпута */
+    width: 100% !important;
+    height: 50px !important;
+    background-color: #6C8485 !important;
     border: none !important;
     border-radius: 12px !important;
     color: white !important;
-    padding: 12px !important;
+    padding-left: 55px !important; 
+    padding-right: 15px !important;
+    font-size: 16px;
 }
 
-.custom-input::placeholder {
-    color: #A0B0B1;
-}
+.custom-input::placeholder { color: #A0B0B1; }
 
-/* Кнопка */
+.mb-3 { margin-bottom: 25px !important; }
+
+/* КНОПКА ВХОДА */
 .btn-signin {
     width: 100%;
     background-color: #4A5D5E;
@@ -102,74 +135,80 @@ body, html {
     transition: 0.3s;
 }
 
-.btn-signin:hover {
-    background-color: #384D48;
+.btn-signin:hover { background-color: #384D48; }
+
+/* ЮЗЕР И ЗАМОЧЕК */
+.icon-field {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 24px;
+    height: 24px;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+    z-index: 20;
+    pointer-events: none;
 }
 
-/* Динозавр */
+.icon-user .icon-field { background-image: url('/img/User.svg') !important; }
+.icon-lock .icon-field { background-image: url('/img/Lock.svg') !important; }
+
+/* КРАСНЫЕ ОШИБКИ */
+.invalid-feedback {
+    display: block !important;
+    color: #ae4848 !important;
+    font-size: 14px;
+    margin-top: 5px;
+    font-weight: 600;
+}
+
+.is-invalid .custom-input {
+    border: 2px solid #ae4848 !important;
+    background-color: #7d5a5a !important;
+}
+
+/* ДИНОЗАВР И ЛИСТОЧКИ*/
 .dino-image {
-    position: absolute; /* КРИТИЧЕСКИ ВАЖНО: это дает право использовать координаты */
+    position: absolute;
     width: 450px; 
-    height: auto; 
-    right: 5%;         /* Расстояние от правого края экрана */
-    top: 70%;          /* Расстояние от верха */
-    transform: translateY(-50%); /* Маленькая хитрость, чтобы центрировать ровно по середине */
-    z-index: 5;        /* Слой: чем выше число, тем "ближе" к тебе (поверх всего остального) */
+    right: 5%;
+    top: 70%;
+    transform: translateY(-50%);
+    z-index: 5;
+    pointer-events: none;
 }
 
-.dino-image {
-    width: 450px;
-}
-
-/* Общие свойства для всех листьев */
 .leaf {
-    position: absolute; /* Позволяет двигать картинку координатами */
-    pointer-events: none; /* Чтобы листик не мешал кликать по кнопкам, если он их перекроет */
+    position: absolute;
+    pointer-events: none;
+    z-index: 100;
 }
 
-/* Настройки конкретно для твоего нового листика */
-.leaf-new-bottom {
-    bottom: 7.5%;      /* Прижать к самому низу */
-    left: 0;        /* Прижать к левому краю */
-    width: 400px;   /* Размер (подбери под себя) */
-    z-index: 100;   /* Чтобы он был ПОВЕРХ серой карточки, как в Figma */
+.leaf-new-bottom { bottom: 7.5%; left: 0; width: 400px; }
+.leaf-new-top { top: 0; right: 0; width: 500px; }
+.leaf-new-top_1 { top: 0; left: 0; width: 300px; }
+.leaf-new-top_2 { top: 0; left: 0; width: 400px; }
+
+/* ПОЛОСКИ СВЕРХУ И СНИЗУ */
+.decor-line, .decor-line-2 {
+    position: fixed;
+    left: 0;
+    width: 100%;
+    background-color: #436063;
+    z-index: 4;
 }
 
-.leaf-new-top {
-    top: 0;      /* Прижать к самому низу */
-    right: 0;        /* Прижать к левому краю */
-    width: 500px;   /* Размер (подбери под себя) */
-    z-index: 100;   /* Чтобы он был ПОВЕРХ серой карточки, как в Figma */
-}
+.decor-line { bottom: 0; height: 70px; }
+.decor-line-2 { top: 0; height: 40px; }
 
-.leaf-new-top_1 {
-    top: 0;      /* Прижать к самому низу */
-    left: 0;        /* Прижать к левому краю */
-    width: 300px;   /* Размер (подбери под себя) */
-    z-index: 100;   /* Чтобы он был ПОВЕРХ серой карточки, как в Figma */
-}
-
-.leaf-new-top_2 {
-    top: 0;      /* Прижать к самому низу */
-    left: 0;        /* Прижать к левому краю */
-    width: 400px;   /* Размер (подбери под себя) */
-    z-index: 100;   /* Чтобы он был ПОВЕРХ серой карточки, как в Figma */
-}
-
-.leaf-new-top_3 {
-    top: -20%;      /* Прижать к самому низу */
-    right: 30%;        /* Прижать к левому краю */
-    width: 500px;   /* Размер (подбери под себя) */
-    z-index: 100;   /* Чтобы он был ПОВЕРХ серой карточки, как в Figma */
-}
-
-.decor-line {
-    position: fixed;     /* Фиксируем относительно экрана */
-    bottom: 0;          /* Прижимаем к самому низу */
-    left: 0;            /* От левого края */
-    width: 100%;        /* На всю ширину */
-    height: 70px;       /* Толщина полоски — подбери под свой глаз */
-    background-color: #436063; /* Цвет как у кнопок или динозавра */
-    z-index: 4;       /* Чтобы она была поверх всего декора */
-
+/* ФИКС ЦВЕТА ИНПУТОВ */
+input:-webkit-autofill,
+input:-webkit-autofill:hover, 
+input:-webkit-autofill:focus, 
+input:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0 1000px #6C8485 inset !important;
+    -webkit-text-fill-color: white !important;
+    transition: background-color 5000s ease-in-out 0s;
 }

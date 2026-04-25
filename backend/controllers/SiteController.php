@@ -9,6 +9,8 @@ use yii\web\Response;
 use yii\filters\VerbFilter;
 use app\models\LoginForm;
 use app\models\ContactForm;
+use app\models\SignupForm;
+use app\models\User;
 
 class SiteController extends Controller
 {
@@ -37,7 +39,7 @@ class SiteController extends Controller
         'verbs' => [
             'class' => \yii\filters\VerbFilter::class,
             'actions' => [
-                // 'logout' => ['post'], // ВРЕМЕННО закомментируй это, чтобы выйти через ссылку
+                // 'logout' => ['post'], // ВРЕМЕННО 
             ],
         ],
     ];
@@ -78,20 +80,36 @@ class SiteController extends Controller
      *
      * @return Response|string
      */
-    public function actionLogin()
+public function actionLogin()
 {
-    if (!Yii::$app->user->isGuest) {
-        return $this->redirect(['site/storage']);
+    if (!Yii::$app->user->isGuest) return $this->redirect(['site/storage']);
+
+    $loginModel = new LoginForm();
+    $signupModel = new SignupForm();
+
+    // проверяем, какая форма пришла
+    if (Yii::$app->request->isPost) {
+        $post = Yii::$app->request->post();
+        
+        // регистр
+        if (isset($post['mode']) && $post['mode'] === 'signup') {
+            if ($signupModel->load($post, "LoginForm") && $signupModel->signup()) {
+                Yii::$app->user->login(User::findByUsername($signupModel->username));
+                $user = \app\models\User::findByUsername($signupModel->username);
+                return $this->redirect(['site/storage']);
+            }
+        } 
+        //  обычный вход
+        else {
+            if ($loginModel->load($post) && $loginModel->login()) {
+                return $this->redirect(['site/storage']);
+            }
+        }
     }
 
-    $model = new \app\models\LoginForm();
-    if ($model->load(Yii::$app->request->post()) && $model->login()) {
-        return $this->redirect(['site/storage']);
-    }
-
-    $model->password = '';
     return $this->render('login', [
-        'model' => $model,
+        'model' => $loginModel, 
+        'signupModel' => $signupModel,
     ]);
 }
 

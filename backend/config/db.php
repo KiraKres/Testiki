@@ -5,7 +5,7 @@ return [
     'dsn' => 'mysql:host=db;dbname=testiki_db', // Замена, чтобы оно могло общаться
     'username' => 'root',
     'password' => '1234',
-    'charset' => 'utf8',
+    'charset' => 'utf8mb4',
 
     // Schema cache options (for production environment)
     //'enableSchemaCache' => true,
