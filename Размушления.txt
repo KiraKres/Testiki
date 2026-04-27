@@ -6,3 +6,6 @@ docker-compose exec php php yii migrate - миграция в корневой �
 http://localhost:8080/index.php?r=site/storage
 http://localhost:8080/index.php?r=site/login
 http://localhost:8080/index.php?r=site/logout - это пост запрос, чтобы разлогиниться, пока нет норм кнопки на фронте
+
+ПОФИКСИТЬ КАК ВЫГЛЯДИТ ЭКРАН, КОГДА ПЫТАЕШЬСЯ ЕГО УВЕЛИЧИТЬ. НЕ ЗАБЫТЬ!!!
+/* Лист всегда будет занимать 30% от ширины окна */ - привязать всё остальное к ширине экрана!!!

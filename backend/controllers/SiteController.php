@@ -22,17 +22,17 @@ class SiteController extends Controller
     return [
         'access' => [
             'class' => \yii\filters\AccessControl::class,
-            'only' => ['logout', 'signup', 'login'], // К каким экшенам применяем правила
+            'only' => ['logout', 'signup', 'login'], //к каким экшенам применяем правила
             'rules' => [
                 [
                     'actions' => ['login', 'signup'],
                     'allow' => true,
-                    'roles' => ['?'], // '?' значит только для гостей
+                    'roles' => ['?'], // ? значит только для гостей
                 ],
                 [
                     'actions' => ['logout'],
                     'allow' => true,
-                    'roles' => ['@'], // '@' значит только для авторизованных
+                    'roles' => ['@'], // @ значит только для авторизованных
                 ],
             ],
         ],
@@ -161,4 +161,17 @@ public function actionLogin()
     }
     return $this->render('storage');
     }
+
+    public function actionRenameFile()
+    {
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        $data = json_decode(\Yii::$app->request->getRawBody(), true);
+
+        if (isset($data['id']) && isset($data['newName'])) {  
+            return ['success' => true]; // временно для теста
+        }
+
+        return ['success' => false];
+    }
+
 }

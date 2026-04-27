@@ -1,5 +1,5 @@
 <?php
-//ПАРОЛЬ admin - admin
+//ПАРОЛЬ admin - admin УЖЕ НЕ АКТУАЛЬНО
 //http://localhost:8080/index.php?r=file/index
 namespace app\controllers;
 
@@ -13,7 +13,7 @@ use app\models\File;
 
 class FileController extends Controller
 {
-    // отключаем CSRF-защиту для API-запросов (чтобы Vue мог слать данные без токена)
+    // отключаем CSRF-защиту для API-запросов 
     public $enableCsrfValidation = false;
 
     //только залогиненные пользователи
@@ -43,7 +43,7 @@ class FileController extends Controller
     //чек список
     public function actionIndex()
     {
-        Yii::$app->response->format = Response::FORMAT_JSON; //- по умолчанию yii шле html, ставит в json
+        Yii::$app->response->format = Response::FORMAT_JSON; //- по умолчанию yii шлет html, ставит в json
         // находим файлы только текущего пользователя
         return File::find()->where(['user_id' => Yii::$app->user->id])->all();
     }
@@ -64,13 +64,13 @@ class FileController extends Controller
             $trueName = $timestamp . "_" . $hash . "_" . $uploadedFile->name;
             $path = 'uploads/' . $trueName;
 
-            // Сохраняем физически на диск
+            // сохраняем физически на диск
             if ($uploadedFile->saveAs($path)) {
                 // запись в бд
                 $model->file_true_name = $trueName;
                 $model->file_name = Yii::$app->request->post('file_name', $uploadedFile->name);
                 $model->file_path = $path;
-                $model->user_name = Yii::$app->user->identity->username;
+                $model->user_name = Yii::$app->user->identity->user_name;
                 $model->user_id = Yii::$app->user->id;
                 
                 if ($model->save()) {
