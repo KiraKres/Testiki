@@ -42,14 +42,22 @@ $config = [
             ],
         ],
         'db' => $db,
-        /*
+        
         'urlManager' => [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
             'rules' => [
+                'storage' => 'site/storage',
+                // пытаюсь добавить относительно красивые ссылочки
+                'GET file' => 'file/index', 
+                'POST file/upload' => 'file/upload',
+                'POST file/delete' => 'file/delete',
+                'POST site/rename-file' => 'site/rename-file',
+                // для остальных контроллеров (на всякий случай)
+                '<controller:\w+>/<action:\w+>' => '<controller>/<action>',
             ],
         ],
-        */
+        
     ],
     'params' => $params,
 ];

@@ -4,6 +4,17 @@ body {
     font-family: 'Inter', sans-serif;
     color: #354F52;
     margin: 0;
+    -webkit-user-select: none; 
+    -ms-user-select: none;      
+    user-select: none;        
+}
+
+/* Разрешаем выделение текста в нужных местах */
+.custom-input, 
+.input-with-label label,
+.file-name-wrapper span {
+    -webkit-user-select: text;
+    user-select: text;
 }
 
 /* ШАПКА И ПРОФИЛЬ */
@@ -33,7 +44,6 @@ body {
 }
 
 /* ЭТО ДИНОЗАВР И НАДПИСЬ */
-
 .logo {
     display: flex;
     align-items: center;
@@ -56,21 +66,22 @@ body {
     box-shadow: 0 4px 15px rgba(0,0,0,0.05);
 }
 
-h1, h2 {
-    font-style: italic;
-    color: #354F52;
+h1, h2, h3 {
+    color: #354F52 !important;
     font-weight: 400;
+    font-style: italic;
+}
+
+h1, h2 {
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.4); 
 }
 
 h2 {
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.4); 
     margin-bottom: 20px;
 }
 
 h3 {
     color: #354F52 !important;
-    font-weight: 400;
-    font-style: italic;
     letter-spacing: 1px;
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.4); 
 }
@@ -172,14 +183,10 @@ h3 {
     padding: 12px 10px;
     color: #354F52;
     border-bottom: 1px solid rgba(53, 79, 82, 0.2);
-}
-
-/* КОЛОНКА С ИМЕНЕМ ФАЙЛА */
-.file-name-td {
-    padding: 12px 10px;
     vertical-align: middle;
 }
 
+/* КОЛОНКА С ИМЕНЕМ ФАЙЛА */
 .file-name-wrapper {
     display: flex;
     align-items: center;
@@ -193,11 +200,6 @@ h3 {
 }
 
 /* КОЛОНКА И КНОПКИ ДЕЙСТВИЙ (ACTIONS) */
-.actions-td {
-    padding: 12px 10px;
-    vertical-align: middle;
-}
-
 .actions-wrapper {
     display: flex;
     justify-content: flex-end;
@@ -258,29 +260,28 @@ h3 {
 }
 
 /* КРУЖКИ */
-.circle1 {
-    width: 25vw; 
-    height: 25vw; 
+.circle1, .circle2 {
     background-color: #6C8485; 
-    left: -10vw; 
-    bottom: 5vh; 
     z-index: -2;
     border-radius: 50%; 
     position: fixed;
+}
+
+.circle1 {
+    width: 25vw; 
+    height: 25vw; 
+    left: -10vw; 
+    bottom: 5vh; 
 } 
 
 .circle2 {
     width: 15vw; 
     height: 15vw; 
-    background-color: #6C8485; 
     left: 10vw; 
     bottom: -5vh; 
-    z-index: -2; 
-    border-radius: 50%; 
-    position: fixed;
 } 
 
-/* Круг Маленький у логотипа) */
+/* круг Маленький у логотипа) */
 .circle3 {
     width: 50px; 
     height: 50px; 
@@ -292,7 +293,7 @@ h3 {
     position: absolute;
 } 
 
-/* Прямоугольник (Фон в углу) */
+/* прямоугольник (Фон в углу) */
 .rect {
     width: 15vw; 
     height: 20vh; 

@@ -43,9 +43,10 @@ class FileController extends Controller
     //чек список
     public function actionIndex()
     {
-        Yii::$app->response->format = Response::FORMAT_JSON; //- по умолчанию yii шлет html, ставит в json
+        Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;//- по умолчанию yii шлет html, ставит в json
         // находим файлы только текущего пользователя
-        return File::find()->where(['user_id' => Yii::$app->user->id])->all();
+        $files = File::find()->where(['user_id' => Yii::$app->user->id])->all();
+        return $files;
     }
 
     //загурзка
@@ -68,7 +69,19 @@ class FileController extends Controller
             if ($uploadedFile->saveAs($path)) {
                 // запись в бд
                 $model->file_true_name = $trueName;
-                $model->file_name = Yii::$app->request->post('file_name', $uploadedFile->name);
+
+                // смотрим какие файлы есть у пользователя, тут логика как в винде с файлами, чтобы имена не повторялись
+                $originalName = Yii::$app->request->post('file_name', $uploadedFile->name);
+                $finalName = $originalName;
+                //запускается только если файл с таким именем уже существует
+                $counter = 1;
+                //типа будет - img.png - img(1).png , чтобы не было путаницы
+                while (File::find()->where(['user_id' => Yii::$app->user->id, 'file_name' => $finalName])->exists()) {
+                    $finalName = $originalName . "($counter)";
+                    $counter++;
+                }
+
+                $model->file_name = $finalName;
                 $model->file_path = $path;
                 $model->user_name = Yii::$app->user->identity->user_name;
                 $model->user_id = Yii::$app->user->id;

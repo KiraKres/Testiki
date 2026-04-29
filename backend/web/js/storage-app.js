@@ -10,9 +10,18 @@ new Vue({
     },
     methods: {
         loadFiles() {
-            axios.get('/index.php?r=file/index').then(res => {
-                this.files = res.data;
-            }).catch(err => console.log("Ошибка загрузки:", err));
+            axios.get('/file/index')
+                .then(res => {
+                    //праблем с притти юрл, фикс - просмотр ошибок
+                    // если пришел HTML (начинается с <!DOCTYPE или <html), значит сервер отдал страницу вместо данных
+                    if (typeof res.data === 'string' && res.data.trim().startsWith('<')) {
+                        console.error("Ошибка: сервер вернул HTML вместо JSON.");
+                        this.files = []; 
+                        return;
+                    }
+                    this.files = res.data;
+                })
+                .catch(err => console.log("Ошибка загрузки:", err));
         },
         handleFileUpload(event) {
             this.selectedFile = event.target.files[0];
@@ -25,7 +34,7 @@ new Vue({
             formData.append('file', this.selectedFile);
             formData.append('file_name', this.fileName);
 
-            axios.post('/index.php?r=file/upload', formData).then(() => {
+            axios.post('/file/upload', formData).then(() => {
                 this.loadFiles();
                 this.selectedFile = null;
                 this.fileName = '';
@@ -33,7 +42,7 @@ new Vue({
         },
         deleteFile(id) {
             if(confirm('Точно удалить?')) {
-                axios.post('/index.php?r=file/delete&id=' + id).then(() => {
+                axios.post('/file/delete?id=' + id).then(() => {
                     this.loadFiles();
                 });
             }

@@ -57,7 +57,7 @@ $this->registerJsFile('@web/js/storage-app.js', ['depends' => [\yii\web\JqueryAs
             <table class="files-table">
                 <thead>
                     <tr>
-                        <th>ID</th>
+                        <th>NUMBER</th>
                         <th>FILE NAME</th>
                         <th>AUTHOR</th>
                         <th>LAST MODIFIED</th>
@@ -67,8 +67,8 @@ $this->registerJsFile('@web/js/storage-app.js', ['depends' => [\yii\web\JqueryAs
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="file in files" :key="file.id">
-                        <td>{{ file.id }}</td>
+                    <tr v-for="(file, index) in files" :key="file.id">
+                        <td>{{ index + 1 }}</td>
                         
                         <td class="file-name-td">
                             <div class="file-name-wrapper">

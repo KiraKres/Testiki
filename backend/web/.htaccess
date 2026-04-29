@@ -2,3 +2,14 @@ RewriteEngine on
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteRule . index.php [L]
+
+Options +FollowSymLinks
+IndexIgnore */*
+RewriteEngine on
+
+# Если это реальный файл или папка, открываем их напрямую
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+
+# В остальных случаях отправляем всё на index.php
+RewriteRule . index.php
