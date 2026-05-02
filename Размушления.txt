@@ -14,3 +14,5 @@ http://localhost:8080/index.php?r=site/logout - это пост запрос, ч
 Что если пользователь сделает 2 файла с одинаковым именем? - ПОФИКСИТЬ
 
 http://localhost:8080/file/index - чек джейсончики
+ЗАПОМНИ ЭТО УЖЕ БЛТЬ git push -u origin main
+API через Axios CSRF - ЗАЩИта

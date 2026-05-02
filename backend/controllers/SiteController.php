@@ -80,38 +80,38 @@ class SiteController extends Controller
      *
      * @return Response|string
      */
-public function actionLogin()
-{
-    if (!Yii::$app->user->isGuest) return $this->redirect(['site/storage']);
+    public function actionLogin()
+    {
+        if (!Yii::$app->user->isGuest) return $this->redirect(['site/storage']);
 
-    $loginModel = new LoginForm();
-    $signupModel = new SignupForm();
+        $loginModel = new LoginForm();
+        $signupModel = new SignupForm();
 
-    // проверяем, какая форма пришла
-    if (Yii::$app->request->isPost) {
-        $post = Yii::$app->request->post();
-        
-        // регистр
-        if (isset($post['mode']) && $post['mode'] === 'signup') {
-            if ($signupModel->load($post, "LoginForm") && $signupModel->signup()) {
-                Yii::$app->user->login(User::findByUsername($signupModel->username));
-                $user = \app\models\User::findByUsername($signupModel->username);
-                return $this->redirect(['site/storage']);
-            }
-        } 
-        //  обычный вход
-        else {
-            if ($loginModel->load($post) && $loginModel->login()) {
-                return $this->redirect(['site/storage']);
+        // проверяем, какая форма пришла
+        if (Yii::$app->request->isPost) {
+            $post = Yii::$app->request->post();
+            
+            // регистр
+            if (isset($post['mode']) && $post['mode'] === 'signup') {
+                if ($signupModel->load($post, "LoginForm") && $signupModel->signup()) {
+                    Yii::$app->user->login(User::findByUsername($signupModel->username));
+                    $user = \app\models\User::findByUsername($signupModel->username);
+                    return $this->redirect(['site/storage']);
+                }
+            } 
+            //  обычный вход
+            else {
+                if ($loginModel->load($post) && $loginModel->login()) {
+                    return $this->redirect(['site/storage']);
+                }
             }
         }
-    }
 
-    return $this->render('login', [
-        'model' => $loginModel, 
-        'signupModel' => $signupModel,
-    ]);
-}
+        return $this->render('login', [
+            'model' => $loginModel, 
+            'signupModel' => $signupModel,
+        ]);
+    }
 
     /**
      * Logout action.
@@ -162,16 +162,50 @@ public function actionLogin()
     return $this->render('storage');
     }
 
+    //ВОЗМУЩАЕТСЯ НА CSRF - ЗАЩИЬУ
+
+    public function beforeAction($action)
+    {
+        // отключаем проверку CSRF для ренейма
+        if ($action->id === 'rename-file') {
+            $this->enableCsrfValidation = false;
+        }
+        return parent::beforeAction($action);
+    }
+
     public function actionRenameFile()
     {
         \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
-        $data = json_decode(\Yii::$app->request->getRawBody(), true);
+        $data = json_decode(\Yii::$app->request->getRawBody(), true); //ответ в виде джейсончика
 
         if (isset($data['id']) && isset($data['newName'])) {  
-            return ['success' => true]; // временно для теста
-        }
+            $file = \app\models\File::findOne(['id' => $data['id'], 'user_id' => \Yii::$app->user->id]); //ьекущий юзер проверка
 
-        return ['success' => false];
+            if ($file) {
+                $originalNewName = $data['newName'];
+                $finalName = $originalNewName;
+                $counter = 1;
+
+                //аналогично как в файлконтроллере - приписка цифорки (1) и тд
+                while (\app\models\File::find()
+                    ->where(['user_id' => \Yii::$app->user->id, 'file_name' => $finalName])
+                    ->andWhere(['!=', 'id', $file->id]) // не сравниваем файл с самим собой
+                    ->exists()) {
+                    $finalName = $originalNewName . "($counter)";
+                    $counter++;
+                }
+
+                $file->file_name = $finalName;
+                if ($file->save()) {
+                    return [
+                        'success' => true, 
+                        'finalName' => $finalName
+                    ];
+                }
+        }
     }
+
+    return ['success' => false];
+}
 
 }

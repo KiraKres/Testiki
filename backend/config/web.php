@@ -55,6 +55,7 @@ $config = [
                 'POST site/rename-file' => 'site/rename-file',
                 // для остальных контроллеров (на всякий случай)
                 '<controller:\w+>/<action:\w+>' => '<controller>/<action>',
+                'file/download/<id:\d+>' => 'file/download',
             ],
         ],
         

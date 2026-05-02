@@ -80,14 +80,29 @@ new Vue({
             if (response.data.success) {
                 // обновляем имя в массиве Vue чтобы страница не перезагружалась
                 const file = this.files.find(f => f.id === id);
-                file.file_name = newName;
+                file.file_name = response.data.finalName;
                 
-                Swal.fire('Saved!', '', 'success');
-            }
+                Swal.fire('Saved!', `New name: ${response.data.finalName}`, 'success');
+            }else {
+            Swal.fire('Error', 'File not found or access denied', 'error');
+        }
         })
         .catch(error => {
             Swal.fire('Error', 'Could not rename file', 'error');
         });
-        }
+        },
+
+        downloadFile(id) {
+            // Формируем URL для скачивания
+            const url = '/file/download/' + id;
+            
+            // Создаем невидимую ссылку, чтобы браузер начал загрузку
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', ''); // Указываем, что это скачивание
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        },
     }
 });

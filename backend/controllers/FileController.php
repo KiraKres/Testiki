@@ -128,4 +128,21 @@ class FileController extends Controller
 
         return ['status' => 'error', 'message' => 'Не удалось обновить'];
     }
+
+    //сначала нужно отдать файл, только после сохранить - тут отдать
+    public function actionDownload($id)
+    {
+        //чек айди
+        $file = File::findOne(['id' => $id, 'user_id' => Yii::$app->user->id]);
+
+        if ($file) {
+            $filePath = Yii::getAlias('@webroot') . '/' . $file->file_path;
+
+            if (file_exists($filePath)) {
+                return Yii::$app->response->sendFile($filePath, $file->file_name);
+            }
+        }
+
+        throw new \yii\web\NotFoundHttpException("Файл не найден.");
+    }
 }
