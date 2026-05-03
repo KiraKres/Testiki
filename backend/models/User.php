@@ -7,7 +7,7 @@ use yii\db\ActiveRecord;
 use yii\web\IdentityInterface;
 
 /**
- * Модель для таблицы "user"
+ * Таблица из миграции юзер
  *
  * @property int $user_id
  * @property string $user_name
@@ -17,13 +17,13 @@ use yii\web\IdentityInterface;
  */
 class User extends ActiveRecord implements IdentityInterface
 {
-    // Указываем имя таблицы в базе данных
+    // имя таблицы
     public static function tableName()
     {
         return 'user';
     }
 
-    // Правила валидации для базы данных
+    // правила юзер бд
     public function rules()
     {
         return [
@@ -34,7 +34,7 @@ class User extends ActiveRecord implements IdentityInterface
         ];
     }
 
-    // --- Методы IdentityInterface (нужны для авторизации) ---
+    // авторизация
 
     public static function findIdentity($id)
     {
@@ -66,7 +66,7 @@ class User extends ActiveRecord implements IdentityInterface
         return $this->getAuthKey() === $authKey;
     }
 
-    // Метод для проверки пароля (хэша)
+    // проверка пароля
     public function validatePassword($password)
     {
         return Yii::$app->security->validatePassword($password, $this->password_hash);

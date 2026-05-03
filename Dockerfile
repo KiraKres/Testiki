@@ -3,6 +3,9 @@ FROM php:7.4-fpm
 RUN apt-get update && apt-get install -y libpng-dev libzip-dev zip unzip && docker-php-ext-install pdo pdo_mysql zip gd
 # Ласт для Yii2
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+# Ругается на размеры файлов - фикс
+COPY ./php.ini /usr/local/etc/php/conf.d/custom.ini
+
 WORKDIR /var/www/html
 # фреймворк Yii2
 # docker-compose exec php composer create-project --prefer-dist yiisoft/yii2-app-basic .

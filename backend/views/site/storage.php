@@ -14,15 +14,19 @@ $this->registerJsFile('https://cdn.jsdelivr.net/npm/sweetalert2@11', ['position'
 $this->registerJsFile('@web/js/storage-app.js', ['depends' => [\yii\web\JqueryAsset::class]]);
 ?>
 
-<div id="storage-app" v-cloak>
+<div id="storage-app" v-cloak
+    data-username="<?= Yii::$app->user->identity->user_name ?>" 
+     class="storage-container">
+
     <header class="main-header">
         <div class="logo">
             <img src="/img/dino_storage.svg" alt="Logo" width="30">
             <span>Testiki</span>
         </div>
+
         <div class="user-profile">
-            <div class="avatar">K</div>
-            <span class="username">Kira</span>
+            <div class="avatar">{{ currentUsername.charAt(0).toUpperCase() }}</div>
+            <span class="username">{{ currentUsername }}</span>
             <a href="<?= \yii\helpers\Url::to(['site/logout']) ?>" class="logout-link">Logout</a>
         </div>
     </header>
@@ -32,10 +36,10 @@ $this->registerJsFile('@web/js/storage-app.js', ['depends' => [\yii\web\JqueryAs
         
         <div class="upload-section">
             <label class="custom-file-upload">
-                <input type="file" @change="handleFileUpload" style="display:none;">
+                <input type="file" ref="fileInput" @change="handleFileUpload" style="display:none;">
                 Выбор файла
             </label>
-            <span class="file-status">
+            <span class="file-status" :title="selectedFileName">
                 {{ selectedFile ? selectedFile.name : 'Не выбран ни один файл' }}
             </span>
             
@@ -71,9 +75,11 @@ $this->registerJsFile('@web/js/storage-app.js', ['depends' => [\yii\web\JqueryAs
                         <td>{{ index + 1 }}</td>
                         
                         <td class="file-name-td">
-                            <div class="file-name-wrapper">
+                            <div class="file-name-wrapper" :title="file.file_name">
                                 <img src="/img/File.svg" alt="" class="table-file-icon">
-                                <span>{{ file.file_name }}</span>
+                                <span :title="file.file_name" @click="showFullName(file.file_name)" style="cursor: pointer;">
+                                    {{ file.file_name }}
+                                </span>
                             </div>
                         </td>
                         
@@ -108,3 +114,4 @@ $this->registerJsFile('@web/js/storage-app.js', ['depends' => [\yii\web\JqueryAs
 <div class="circle2"></div>
 <div class="circle3"></div>
 <div class="rect"></div>
+

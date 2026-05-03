@@ -11,6 +11,7 @@ use app\models\LoginForm;
 use app\models\ContactForm;
 use app\models\SignupForm;
 use app\models\User;
+use app\models\File;
 
 class SiteController extends Controller
 {
@@ -87,30 +88,34 @@ class SiteController extends Controller
         $loginModel = new LoginForm();
         $signupModel = new SignupForm();
 
-        // проверяем, какая форма пришла
         if (Yii::$app->request->isPost) {
             $post = Yii::$app->request->post();
             
-            // регистр
             if (isset($post['mode']) && $post['mode'] === 'signup') {
-                if ($signupModel->load($post, "LoginForm") && $signupModel->signup()) {
-                    Yii::$app->user->login(User::findByUsername($signupModel->username));
-                    $user = \app\models\User::findByUsername($signupModel->username);
+                // регистрируемся
+                if ($signupModel->load($post, '') && $signupModel->signup()) {
+                    $user = User::findByUsername($signupModel->username);
+                    Yii::$app->user->login($user);
                     return $this->redirect(['site/storage']);
                 }
-            } 
-            //  обычный вход
-            else {
-                if ($loginModel->load($post) && $loginModel->login()) {
+                // Если ошибка — рендерим логин, но передаем signupModel как основную
+                return $this->render('login', [
+                    'model' => $signupModel, 
+                    'mode' => 'signup' 
+                ]);
+            } else {
+                // обычный вход
+                if ($loginModel->load($post, '') && $loginModel->login()) {
                     return $this->redirect(['site/storage']);
                 }
+                return $this->render('login', [
+                    'model' => $loginModel, 
+                    'mode' => 'login'
+                ]);
             }
         }
 
-        return $this->render('login', [
-            'model' => $loginModel, 
-            'signupModel' => $signupModel,
-        ]);
+        return $this->render('login', ['model' => $loginModel, 'mode' => 'login']);
     }
 
     /**
@@ -176,36 +181,54 @@ class SiteController extends Controller
     public function actionRenameFile()
     {
         \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
-        $data = json_decode(\Yii::$app->request->getRawBody(), true); //ответ в виде джейсончика
+        $data = json_decode(\Yii::$app->request->getRawBody(), true);
 
-        if (isset($data['id']) && isset($data['newName'])) {  
-            $file = \app\models\File::findOne(['id' => $data['id'], 'user_id' => \Yii::$app->user->id]); //ьекущий юзер проверка
+        if (isset($data['id']) && isset($data['newName'])) {
+            $model = File::findOne($data['id']);
+            if (!$model) return ['success' => false, 'error' => 'File not found'];
 
-            if ($file) {
-                $originalNewName = $data['newName'];
-                $finalName = $originalNewName;
-                $counter = 1;
+            $newName = trim($data['newName']);
+            if (empty($newName)) return ['success' => false, 'error' => 'Name cannot be empty'];
 
-                //аналогично как в файлконтроллере - приписка цифорки (1) и тд
-                while (\app\models\File::find()
-                    ->where(['user_id' => \Yii::$app->user->id, 'file_name' => $finalName])
-                    ->andWhere(['!=', 'id', $file->id]) // не сравниваем файл с самим собой
-                    ->exists()) {
-                    $finalName = $originalNewName . "($counter)";
-                    $counter++;
-                }
+            //расширение из физического имени файла на диске
+            $extension = pathinfo($model->file_true_name, PATHINFO_EXTENSION);
 
-                $file->file_name = $finalName;
-                if ($file->save()) {
-                    return [
-                        'success' => true, 
-                        'finalName' => $finalName
-                    ];
-                }
+            // принудительно, чтобы не менять расширения
+            // ФИКС: очищаем имя от расширения, если юзер его случайно ввел
+            // Используем mb_stripos для надежности, чтобы точка в конце не ломала имя
+            $cleanName = preg_replace('/\.'.preg_quote($extension, '/').'$/i', '', $newName);
+            $finalName = $cleanName . '.' . $extension;
+
+            // дублики
+            $counter = 1;
+            $tempName = $finalName;
+            
+            // Проверяем, существует ли файл с таким именем у этого юзера (исключая текущий файл)
+            // ВАЖНО: Добавляем user_id, чтобы не конфликтовать с чужими файлами
+            while (File::find()->where(['user_id' => Yii::$app->user->id, 'file_name' => $tempName])
+                    ->andWhere(['not', ['id' => $model->id]])->exists()) {
+                // ФИКС: формируем новое имя, вставляя счетчик ПЕРЕД расширением
+                $tempName = $cleanName . "($counter)." . $extension;
+                $counter++;
+            }
+
+            $model->file_name = $tempName;
+
+            if ($model->save()) {
+                $model->refresh();
+                // Возвращаем finalName, чтобы Vue мог обновить строку в таблице
+                return ['success' => true, 
+                'finalName' => $tempName,
+                'newTime' => $model->time_modify
+                ];
+            }
         }
+        return ['success' => false];
     }
 
-    return ['success' => false];
-}
-
+    public function actionSignup()
+    {
+        // фикс ошибки 404
+        return $this->actionLogin();
+    }
 }

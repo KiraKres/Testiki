@@ -3,11 +3,19 @@ new Vue({
     data: {
         files: [],
         selectedFile: null,
-        fileName: ''
+        fileName: '',
+        currentUsername: 'Guest'
     },
     mounted() {
+        //ник пользователя
+        const nameFromData = this.$el.getAttribute('data-username');
+        if (nameFromData) {
+            this.currentUsername = nameFromData;
+        }
+        
         this.loadFiles();
     },
+
     methods: {
         loadFiles() {
             axios.get('/file/index')
@@ -25,7 +33,11 @@ new Vue({
         },
         handleFileUpload(event) {
             this.selectedFile = event.target.files[0];
-            if (!this.fileName) this.fileName = this.selectedFile.name;
+            if (this.selectedFile && !this.fileName) {
+                this.fileName = this.selectedFile.name;
+            }
+            //чтобы можно было один и тот же файл два раза подряд разгузить - проблема с инпутом
+            this.$refs.fileInput.value = '';
         },
         uploadFile() {
             if (!this.selectedFile) return alert('Выберите файл!');
@@ -49,13 +61,18 @@ new Vue({
         },
 
         editFile(id) {
-        // ИСПРАВИТЬ НЕ ЗАБЫТЬ!!! СМЕНИТЬ АЙДИ НА ПРОСТО НУМЕРАЦИЮ
+        // чтобы юзер не делал битые файлы
         const file = this.files.find(f => f.id === id);
+        const fileName = file.file_name;
+        const lastDotIndex = fileName.lastIndexOf('.');
+        const nameWithoutExt = lastDotIndex !== -1 
+            ? fileName.substring(0, lastDotIndex) 
+            : fileName;
         
         Swal.fire({
             title: 'Rename File',
             input: 'text',
-            inputValue: file.file_name,
+            inputValue: nameWithoutExt,
             showCancelButton: true,
             confirmButtonText: 'Save',
             confirmButtonColor: '#354F52',
@@ -72,37 +89,45 @@ new Vue({
         },
 
         updateFileName(id, newName) {
-        axios.post('/site/rename-file', {
-            id: id,
-            newName: newName
-        })
-        .then(response => {
-            if (response.data.success) {
-                // обновляем имя в массиве Vue чтобы страница не перезагружалась
-                const file = this.files.find(f => f.id === id);
-                file.file_name = response.data.finalName;
-                
-                Swal.fire('Saved!', `New name: ${response.data.finalName}`, 'success');
-            }else {
-            Swal.fire('Error', 'File not found or access denied', 'error');
-        }
-        })
-        .catch(error => {
-            Swal.fire('Error', 'Could not rename file', 'error');
-        });
+            axios.post('/site/rename-file', { id: id, newName: newName })
+            .then(response => {
+                if (response.data.success) {
+                    const file = this.files.find(f => f.id === id);
+                    if (file) {
+                        file.file_name = response.data.finalName;
+                        file.time_modify = response.data.newTime; // ОБНОВЛЯЕМ ДАТУ ТУТ
+                        Swal.fire('Saved!', `New name: ${response.data.finalName}`, 'success');
+                    }
+                } else {
+                    Swal.fire('Error', response.data.error || 'Access denied', 'error');
+                }
+            })
+            .catch(error => {
+                console.error(error);
+                Swal.fire('Error', 'Could not rename file', 'error');
+            });
         },
 
         downloadFile(id) {
-            // Формируем URL для скачивания
+            // скачать
             const url = '/file/download/' + id;
             
-            // Создаем невидимую ссылку, чтобы браузер начал загрузку
             const link = document.createElement('a');
             link.href = url;
-            link.setAttribute('download', ''); // Указываем, что это скачивание
+            link.setAttribute('download', '');
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
+        },
+
+        showFullName(name) {
+            Swal.fire({
+                title: 'Полное имя файла',
+                text: name,
+                icon: 'info',
+                confirmButtonText: 'Окей',
+                confirmButtonColor: '#436063' 
+            });
         },
     }
 });

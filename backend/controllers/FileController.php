@@ -71,13 +71,33 @@ class FileController extends Controller
                 $model->file_true_name = $trueName;
 
                 // смотрим какие файлы есть у пользователя, тут логика как в винде с файлами, чтобы имена не повторялись
-                $originalName = Yii::$app->request->post('file_name', $uploadedFile->name);
+                $userInputName = trim(Yii::$app->request->post('file_name', ''));
+                
+                if (empty($userInputName)) {
+                    $userInputName = $uploadedFile->name;
+                }
+                
+                $extension = pathinfo($uploadedFile->name, PATHINFO_EXTENSION);
+                
+                // юзер стер расширение в инпуте - принудительно возвращаем его - юзер лох какойто
+                if (!str_ends_with(strtolower($userInputName), '.' . strtolower($extension))) {
+                    $originalName = $userInputName . '.' . $extension;
+                } else {
+                    $originalName = $userInputName;
+                }
+
                 $finalName = $originalName;
                 //запускается только если файл с таким именем уже существует
                 $counter = 1;
+                
                 //типа будет - img.png - img(1).png , чтобы не было путаницы
+                // НЮАНС отделяем имя от расширения для цикла
+                // ФИКС: вместо pathinfo используем mb_substr, чтобы пробелы и кириллица не отвалилась
+                $dotPos = mb_strrpos($originalName, '.');
+                $namePart = ($dotPos !== false) ? mb_substr($originalName, 0, $dotPos) : $originalName;
+                
                 while (File::find()->where(['user_id' => Yii::$app->user->id, 'file_name' => $finalName])->exists()) {
-                    $finalName = $originalName . "($counter)";
+                    $finalName = $namePart . "($counter)." . $extension;
                     $counter++;
                 }
 

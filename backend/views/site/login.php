@@ -4,11 +4,13 @@ use yii\bootstrap5\Html;
 
 $this->title = 'Welcome!';
 $this->registerCssFile('@web/css/login-style.css?v=' . time());
+
 // Vue
 $this->registerJsFile('https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js', ['position' => \yii\web\View::POS_HEAD]);
 ?>
 
-<div class="login-page" id="auth-app"> <div class="bg-circle"></div>
+<div class="login-page" id="auth-app">
+    <div class="bg-circle"></div>
     <div class="bg-circle-2"></div>
     <div class="bg-circle-3"></div>
     <div class="bg-circle-4"></div>
@@ -16,14 +18,19 @@ $this->registerJsFile('https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js', ['p
     <div class="login-container">
         <div class="login-card">
             <h1>Welcome!</h1>
-            
+
             <div class="tabs">
                 <span class="tab" :class="{ active: mode === 'login' }" @click="mode = 'login'">sign in</span>
                 <span class="tab" :class="{ active: mode === 'signup' }" @click="mode = 'signup'">sign up</span>
-            </div>      
+            </div>
 
             <?php $form = ActiveForm::begin([
                 'id' => 'login-form',
+                'enableClientValidation' => false,
+                'action' => ['site/login'], 
+                'options' => [
+                    ':action' => "mode === 'login' ? '" . \yii\helpers\Url::to(['site/login']) . "' : '" . \yii\helpers\Url::to(['site/signup']) . "'",
+                ],
                 'fieldConfig' => [
                     'template' => "{label}\n<div class='input-group-custom'>{input}<div class='icon-field'></div></div>\n{error}",
                     'labelOptions' => ['class' => 'custom-label'],
@@ -33,21 +40,21 @@ $this->registerJsFile('https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js', ['p
 
             <?= $form->field($model, 'username', [
                 'options' => ['class' => 'mb-3 icon-user'],
-            ])->textInput(['placeholder' => 'username'])->label('username') ?>
+            ])->textInput(['placeholder' => 'username', 'name' => 'username'])->label('username') ?>
 
             <?= $form->field($model, 'password', [
                 'options' => ['class' => 'mb-3 icon-lock'],
-            ])->passwordInput(['placeholder' => 'password'])->label('password') ?>
+            ])->passwordInput(['placeholder' => 'password', 'name' => 'password'])->label('password') ?>
 
-            <div v-if="mode === 'signup'" v-cloak>
-                <?= $form->field($model, 'password', [ 
-                    'options' => ['class' => 'mb-3 icon-lock'],
-                    'template' => "{label}\n<div class='input-group-custom'>{input}<div class='icon-field'></div></div>\n{error}"
-                ])->passwordInput(['placeholder' => 'confirm password'])->label('confirm password') ?>
-            </div>
+            <?= $form->field($model, 'password_repeat', [
+                'options' => [
+                    'class' => 'mb-4 icon-lock',
+                    'v-show' => "mode === 'signup'",
+                    'v-cloak' => true
+                ],
+            ])->passwordInput(['placeholder' => 'confirm password', 'name' => 'password_repeat'])->label('confirm password') ?>
 
-            <div class="form-group">
-            </div>
+            <div class="form-group"></div>
 
             <input type="hidden" name="mode" :value="mode">
 
@@ -64,19 +71,19 @@ $this->registerJsFile('https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js', ['p
             <img src="/img/dino_login.svg" alt="Dino" class="dino-image">
         </div>
 
-        <div class="leaf_on_bottom">  
+        <div class="leaf_on_bottom">
             <img src="/img/leaf_on_bottom_login.svg" class="leaf leaf-new-bottom" alt="">
         </div>
 
-        <div class="leaf_on_top">  
+        <div class="leaf_on_top">
             <img src="/img/leaf_on_top_login.svg" class="leaf leaf-new-top" alt="">
         </div>
 
-        <div class="leaf_on_top">  
+        <div class="leaf_on_top">
             <img src="/img/leaf_on_top_login_1.svg" class="leaf leaf-new-top_1" alt="">
         </div>
 
-        <div class="leaf_on_top">  
+        <div class="leaf_on_top">
             <img src="/img/leaf_on_top_login_2.svg" class="leaf leaf-new-top_2" alt="">
         </div>
 
@@ -86,11 +93,11 @@ $this->registerJsFile('https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js', ['p
 </div>
 
 <script>
-//  Vue
+// Vue
 new Vue({
     el: '#auth-app',
     data: {
-        mode: 'login' // по умолчанию будет логин, можно переключить
+        mode: '<?= Yii::$app->request->post("mode", "login") ?>' // по умолчанию будет логин, можно переключить
     }
 });
 </script>

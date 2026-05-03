@@ -1,5 +1,4 @@
 <?php
-
 $params = require __DIR__ . '/params.php';
 $db = require __DIR__ . '/db.php';
 
@@ -48,14 +47,17 @@ $config = [
             'showScriptName' => false,
             'rules' => [
                 'storage' => 'site/storage',
-                // пытаюсь добавить относительно красивые ссылочки
+                'signup' => 'site/login',
+                'login' => 'site/login', 
+                
                 'GET file' => 'file/index', 
                 'POST file/upload' => 'file/upload',
                 'POST file/delete' => 'file/delete',
                 'POST site/rename-file' => 'site/rename-file',
-                // для остальных контроллеров (на всякий случай)
-                '<controller:\w+>/<action:\w+>' => '<controller>/<action>',
+                
                 'file/download/<id:\d+>' => 'file/download',
+                
+                '<controller:\w+>/<action:\w+>' => '<controller>/<action>',
             ],
         ],
         
