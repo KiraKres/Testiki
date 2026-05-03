@@ -40,3 +40,9 @@ pptx  не грузит ФИКС
 ГЛАЗИК ФИКС
 Два раза рега. после регистрации перекидывает на вход, но потом невозможно войти ФИКС
 Плашка неправильный пароль не выскакивает ФИКС
+
+
+ТЕСТ 
+ЗАПУСК docker-compose exec php vendor/bin/codecept run functional LoginFormCest - имя файла в конце если надо
+СБРОСИТЬ КЭШ ТЕСТОВ docker-compose exec php vendor/bin/codecept build
+РУГАЕТСЯ НА ПРАВА docker-compose exec php chmod -R 777 /var/www/html/web/uploads

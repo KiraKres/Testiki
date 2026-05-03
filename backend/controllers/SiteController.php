@@ -23,7 +23,7 @@ class SiteController extends Controller
     return [
         'access' => [
             'class' => \yii\filters\AccessControl::class,
-            'only' => ['logout', 'signup', 'login'], //к каким экшенам применяем правила
+            'only' => ['logout', 'signup', 'login', 'rename-file', 'storage'], 
             'rules' => [
                 [
                     'actions' => ['login', 'signup'],
@@ -31,7 +31,7 @@ class SiteController extends Controller
                     'roles' => ['?'], // ? значит только для гостей
                 ],
                 [
-                    'actions' => ['logout'],
+                    'actions' => ['logout', 'rename-file', 'storage'], // ФИКС: добавила rename-file сюда
                     'allow' => true,
                     'roles' => ['@'], // @ значит только для авторизованных
                 ],
@@ -184,7 +184,8 @@ class SiteController extends Controller
         $data = json_decode(\Yii::$app->request->getRawBody(), true);
 
         if (isset($data['id']) && isset($data['newName'])) {
-            $model = File::findOne($data['id']);
+            // ФИКС: ищем только файл текущего пользователя для безопасности
+            $model = File::findOne(['id' => $data['id'], 'user_id' => Yii::$app->user->id]);
             if (!$model) return ['success' => false, 'error' => 'File not found'];
 
             $newName = trim($data['newName']);
@@ -195,7 +196,6 @@ class SiteController extends Controller
 
             // принудительно, чтобы не менять расширения
             // ФИКС: очищаем имя от расширения, если юзер его случайно ввел
-            // Используем mb_stripos для надежности, чтобы точка в конце не ломала имя
             $cleanName = preg_replace('/\.'.preg_quote($extension, '/').'$/i', '', $newName);
             $finalName = $cleanName . '.' . $extension;
 
@@ -221,9 +221,11 @@ class SiteController extends Controller
                 'finalName' => $tempName,
                 'newTime' => $model->time_modify
                 ];
+            } else {
+                return ['success' => false, 'error' => 'Save failed', 'details' => $model->getErrors()];
             }
         }
-        return ['success' => false];
+        return ['success' => false, 'error' => 'Invalid data'];
     }
 
     public function actionSignup()

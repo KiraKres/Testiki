@@ -12,6 +12,8 @@ return [
     'aliases' => [
         '@bower' => '@vendor/bower-asset',
         '@npm'   => '@vendor/npm-asset',
+        '@webroot' => dirname(__DIR__) . '/web',
+        '@web' => '/',
     ],
     'language' => 'en-US',
     'components' => [
@@ -26,9 +28,26 @@ return [
         'assetManager' => [
             'basePath' => __DIR__ . '/../web/assets',
         ],
+        //чтобы оно понимало красивые ссылочки - это из веб.пхп
         'urlManager' => [
-            'showScriptName' => true,
+            'enablePrettyUrl' => true,
+            'showScriptName' => false,
+            'rules' => [
+                'storage' => 'site/storage',
+                'signup' => 'site/login',
+                'login' => 'site/login', 
+                
+                'GET file' => 'file/index', 
+                'POST file/upload' => 'file/upload',
+                'POST file/delete' => 'file/delete',
+                'POST site/rename-file' => 'site/rename-file',
+                
+                'file/download/<id:\d+>' => 'file/download',
+                
+                '<controller:\w+>/<action:\w+>' => '<controller>/<action>',
+            ],
         ],
+
         'user' => [
             'identityClass' => 'app\models\User',
         ],
